@@ -775,21 +775,7 @@
       profileImg.addEventListener('click', ()=> profileFile.click());
     }
 
-    // ========== logo local change ==========
-    (function(){
-      const logoFile = document.getElementById('logoFile');
-      const logoImg = document.getElementById('logoImg');
-      if(logoFile){
-        logoFile.addEventListener('change', ()=> {
-          const file = logoFile.files[0];
-          if(!file || !file.type.startsWith('image/')) return;
-          const reader = new FileReader();
-          reader.onload = e => { logoImg.src = e.target.result; };
-          reader.readAsDataURL(file);
-        });
-        logoImg.addEventListener('click', ()=> logoFile.click());
-      }
-    })();
+  
 
     // ========== Floating social: touch handling for tooltips ==========
     (function(){
