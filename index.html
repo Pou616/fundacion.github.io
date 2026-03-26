@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fundación Soy Como Tú</title>
+
+  <style>
+    /* ---------- Variables y reset ---------- */
+    :root{
+      --bg: #FFF8F2;
+      --card: #ffffff;
+      --muted: #52606D;
+
+      /* Color universal botones (no usado para social brand) */
+      --btn-color: #6B879E;
+      --btn-color-hover: #5E7A90;
+      --btn-text: #ffffff;
+
+      --radius: 12px;
+      --shadow: 0 8px 22px rgba(16,24,40,0.08);
+      --maxw: 1120px;
+      --header-safe: 18px;
+      --header-h: 120px; /* se ajusta vía JS */
+    }
+    *{box-sizing:border-box}
+    html { scroll-behavior: smooth; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color:#0b1220;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      justify-content:center;
+      padding:0;
+    }
+
+    /* ---------- Contenedor ---------- */
+    .site{
+      width:100%;
+      max-width:var(--maxw);
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:start;
+      padding: calc(var(--header-h) + var(--header-safe)) 22px 48px;
+      margin:0 auto;
+    }
+
+    /* ---------- HEADER (fijo) ---------- */
+    header.top{
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 44px);
+      max-width: var(--maxw);
+      background: rgba(255,255,255,0.98);
+      padding: 12px 18px;
+      z-index: 9998;
+      box-shadow: 0 6px 20px rgba(20,20,30,0.04);
+      border-radius: 10px;
+      
+    }
+    .nav-inner { display:flex; align-items:center; gap:16px; }
+    .logo { display:flex; gap:12px; align-items:center; flex-shrink:0; }
+    .logo img{ width:98px; height:98px; border-radius:10px; object-fit:cover; }
+    .brand{ font-weight:700; font-size:18px; line-height:1; }
+    nav.main{ margin-left:auto; display:flex; gap:14px; align-items:center; }
+    nav.main a{ text-decoration:none; color:var(--muted); font-weight:600; padding:8px 10px; border-radius:8px; }
+
+    /* CTA (Donaciones) usa mismo color de botones */
+    nav.main a.cta{
+      background: var(--btn-color);
+      color: var(--btn-text);
+      padding:8px 12px;
+      border-radius:10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+    }
+    nav.main a.cta:hover {
+      background: var(--btn-color-hover);
+    }
+
+    /* ---------- Left column (contenido) ---------- */
+    .left{ display:flex; flex-direction:column; gap:18px; }
+    .hero{
+      background: var(--card);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow: var(--shadow);
+      display:flex;
+      gap:16px;
+      align-items:center;
+    }
+    .hero .info{ flex:1; }
+    .hero h1{ margin:0 0 8px 0; font-size:26px; color:#1b2330; }
+    .hero p{ margin:0; color:var(--muted); font-size:15px; line-height:1.6; }
+
+    /* image card */
+    .art{
+      width:220px; height:140px; border-radius:10px; background:#f7f7f7; overflow:hidden; display:flex; align-items:center; justify-content:center; position:relative;
+      box-shadow: 0 8px 20px rgba(20,20,30,0.04);
+    }
+    .art img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .editBtn{ position:absolute; right:8px; bottom:8px; background:rgba(0,0,0,0.5); color:white; border:none; padding:6px 8px; border-radius:8px; cursor:pointer; font-size:13px; }
+
+    /* ---------- Cards y contenido ---------- */
+    .content{ display:grid; gap:18px; }
+    .card{
+      background:var(--card);
+      border-radius:10px;
+      padding:16px;
+      box-shadow:var(--shadow);
+      margin-bottom:28px; /* separación aumentada para claridad */
+    }
+    h2{ margin:0 0 10px 0; font-size:20px; }
+    p{ color:var(--muted); line-height:1.6; }
+
+    .activity-ico{ width:100%; height:140px; border-radius:10px; background:#fff; display:flex; align-items:center; justify-content:center; border:2px dashed rgba(16,24,40,0.04); }
+
+    /* Aplicar separación extra también en columnas */
+    .left .card,
+    .right .card,
+    .right .panel,
+    .right .canvas-wrap{
+      margin-bottom:28px !important;
+    }
+
+    /* ---------- Right column ---------- */
+    .right{ display:flex; flex-direction:column; gap:16px; }
+
+    .panel{ padding:14px; border-radius:10px; background:var(--card); box-shadow:var(--shadow); }
+
+    /* ---------- BOTONES: TODOS con color gris-azulado (#6B879E) ---------- */
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      border:0;
+      border-radius:10px;
+      padding:10px 12px;
+      font-weight:700;
+      cursor:pointer;
+      background: var(--btn-color);
+      color: var(--btn-text);
+      width:100%;
+      transition:0.25s ease-in-out;
+    }
+    .btn:hover{
+      background: var(--btn-color-hover);
+    }
+
+    .btn.ghost{
+      background:#e3e9ef;
+      border:1px solid #cbd6df;
+      color:#445664;
+    }
+    .btn.ghost:hover{
+      background:#d6dee6;
+    }
+
+    .canvas-wrap{ padding:12px; border-radius:10px; background:var(--card); box-shadow:var(--shadow); }
+    /* <-- pequeña mejora: evitar scroll táctil cuando se dibuja */
+    .draw-canvas{ width:100%; height:420px; border-radius:8px; background:white; border: 2px dashed rgba(16,24,40,0.06); display:block; touch-action: none; }
+
+    /* ---------- Donaciones (más arriba, centrada) ---------- */
+    #donar{ margin-top:8px; }
+    .don-row{ display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+    .qr-box{ width:220px; height:220px; background:white; border-radius:10px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); overflow:hidden; cursor:pointer; }
+    .don-text{ flex:1; min-width:220px; }
+
+    /* ---------- Floating social (usar posicionamiento vertical centrado correctamente) ---------- */
+    .social-fixed {
+      position: fixed;
+      top: 50%; /* centrado vertical en viewport */
+      right: 18px;
+      transform: translateY(-50%); /* mover arriba la mitad de su alto -> centrado perfecto */
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 10005; /* encima del header */
+      pointer-events: none;
+    }
+
+    .social-btn {
+      pointer-events: auto;
+      width: 56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; text-decoration:none; position:relative; box-shadow: 0 10px 28px rgba(12,12,20,0.06); transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      color: white;
+      background: var(--btn-color); /* default, overridden by brand classes below */
+    }
+    .social-btn:hover{ transform: translateY(-6px); box-shadow: 0 14px 34px rgba(12,12,20,0.12); }
+
+    /* Facebook - azul oficial */
+    .social-btn.facebook{
+      background: #1877F2;
+    }
+    .social-btn.facebook:hover{
+      background: #156fe0;
+    }
+
+    /* Instagram - degradado clásico */
+    .social-btn.instagram{
+      background: linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);
+    }
+    .social-btn.instagram:hover{
+      filter:brightness(.95);
+    }
+
+    /* WhatsApp - verde oficial */
+    .social-btn.whatsapp{
+      background: linear-gradient(135deg,#25D366,#128C7E);
+    }
+    .social-btn.whatsapp:hover{
+      background: linear-gradient(135deg,#1fa95a,#0f7a67);
+    }
+
+    /* tooltip (igual que antes) */
+    .social-btn[data-tip]:hover::after,
+    .social-btn[data-tip].show-tip::after {
+      content: attr(data-tip);
+      position: absolute;
+      right: 70px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(16,24,40,0.98);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      font-size: 13px;
+      box-shadow: 0 8px 26px rgba(0,0,0,0.22);
+      pointer-events: none;
+    }
+    .social-btn[data-tip]:hover::before,
+    .social-btn[data-tip].show-tip::before {
+      content:"";
+      position:absolute;
+      right:60px; top:50%; transform: translateY(-50%) rotate(45deg);
+      width:10px; height:10px; background: rgba(16,24,40,0.98); z-index:9999; pointer-events:none;
+    }
+
+    /* small screens: mover un poco y reducir tamaño */
+    @media (max-width: 980px){
+      .site{ grid-template-columns: 1fr; padding: calc(var(--header-h) + var(--header-safe)) 14px 40px; }
+      nav.main{ display:none; }
+      .art{ width:100%; height:140px; }
+      .social-fixed{
+        right:12px;
+        top:40%;
+        transform: translateY(-40%);
+      }
+      .social-btn{ width:48px; height:48px; border-radius:12px; }
+      .social-btn[data-tip]::after{ display:none; } /* ocultar tooltips en móvil */
+    }/* Fondo con imagen para el header donde están Inicio, Programas, etc */
+    header.top {
+      min-height: 140px; /* prueba con 120px, 140px, 160px */
+      background-image: url("letrero.jpg");
+      background-size: 5px 5px;
+      background-size: 77% 100%;
+      background-position: center;
+     background-repeat: no-repeat;
+     background-color: #ffffff; /* coloca un fondo detrás para que no se vea vacío */
+}
+
+/* capa suave para que se lean bien los textos del menú */
+    header.top::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(20, 110, 170, 0.205); 
+      border-radius: inherit;
+      z-index: 0;
+    }
+
+/* aseguramos que el contenido quede encima de la capa oscura */
+    header.top * {
+      position: relative;
+      z-index: 1;
+      color: white !important; /* texto blanco para mejor lectura */
+    }
+    /* Aplicar mismo estilo que Donaciones a todos los botones del menú */
+    nav.main a {
+     background: var(--btn-color);     /* mismo fondo gris-azulado */
+      color: var(--btn-text) !important;
+      padding: 8px 12px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+     font-weight: 600;
+     transition: 0.25s ease-in-out;
+    }
+
+/* Hover igual para todos */
+  nav.main a:hover {
+     background: var(--btn-color-hover);
+    }
+  nav.main {
+     margin-left: 200px; /* Puedes aumentar a 30px, 40px, etc. */
+     margin-top: 70px; /* amrgen superior*/
+     
+    }
+    /* ===== GALERÍA DE ACTIVIDADES ===== */
+.gallery-card{
+  position: relative;
+  width: 100%;
+  height: 340px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f3f3;
+}
+
+.gallery-card img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-btn{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  border: none;
+  color: white;
+  font-size: 20px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.gallery-btn.left{ left: 8px; }
+.gallery-btn.right{ right: 8px; }
+
+.gallery-btn:hover{
+  background: rgba(0,0,0,0.75);
+}
+
+</style>
+</head>
+<body>
+
+  <main class="site" role="main" aria-labelledby="title">
+
+    <!-- HEADER (preservado y editable) -->
+    <header class="top" role="banner" aria-label="Encabezado principal">
+      <div class="nav-inner">
+        <div class="logo" aria-hidden="false" style="align-items:center;">
+          <img id="logoImg" src="D:\Programacion\Ejemplos Programaciòn\PaginaFundacion\logon.jpg" alt="Logo Fundación">
+          <div style="margin-left:6px;">
+            <div class="brand" id="title">Fundación Soy Como Tú</div>
+            <div style="font-size:12px;color:var(--muted)">Expresión, arte y bienestar</div>
+          </div>
+
+        <nav class="main" role="navigation" aria-label="Menú principal">
+          <a href="#inicio">Inicio</a>
+          <a href="#quienes">Quiénes somos</a>
+          <a href="#programas">Programas</a>
+          <a href="#donar" class="cta">Donaciones</a>
+          <a href="#contacto">Contacto</a>
+          
+        </nav>
+      </div>
+    </header>
+
+    <!-- LEFT: hero + contenido -->
+    <section class="left" aria-label="Contenido principal">
+      <article class="hero" id="inicio" aria-labelledby="hero-title">
+        <div class="info">
+          <h1 id="hero-title">Quiénes somos</h1>
+          <p>
+            La Fundación Soy Como Tú nació en Yumbo en el año 2005 con un propósito muy claro:
+            acompañar a niños, niñas, jóvenes y adultos en situación de discapacidad a través de la música, el arte y diferentes procesos terapéuticos.
+            Durante más de 22 años hemos trabajado con dedicación para descubrir y fortalecer las capacidades de cada participante, respetando su ritmo y talento.
+          </p>
+        </div>
+
+        <div class="art" aria-hidden="false">
+          <img id="profileImg" src="img/placeholder-profile.jpg" alt="Imagen representativa de la fundación">
+          <label for="profileFile" class="editBtn" style="all:unset;cursor:pointer;">
+            <button class="editBtn" aria-hidden="true">Editar</button>
+          </label>
+          <input type="file" id="profileFile" accept="image/*" style="display:none;">
+        </div>
+      </article>
+
+      <div class="content">
+        <section class="card mission" id="quienes" aria-labelledby="mision-title">
+          <h2 id="mision-title">Nuestra Misión</h2>
+          <p>
+            En la Fundación Soy Como Tú trabajamos para acompañar a niños, niñas, jóvenes y adultos en situación de discapacidad a través de la música, el arte y procesos terapéuticos.
+            Buscamos aportar al bienestar emocional, físico y social de nuestros participantes, ofreciendo oportunidades reales de crecimiento e inclusión.
+          </p>
+        </section>
+
+      <aside class="card activities" id="actividades" aria-labelledby="activ-title">
+        <h2 id="activ-title">Actividades</h2>
+
+        <div class="gallery-card">
+         <button class="gallery-btn left" id="prevAct">❮</button>
+
+       <img id="galleryImg" src="img/actividad1.jpg" alt="Actividad">
+
+          <button class="gallery-btn right" id="nextAct">❯</button>
+      </div>
+
+        <p id="galleryText" style="margin-top:12px; color:var(--muted); text-align:center;">
+          Taller de música terapéutica para niños.
+      </p>
+    </aside>
+
+
+      <!-- Donaciones (más visible, no tan abajo) -->
+      <section id="donar" class="card" aria-labelledby="donar-title">
+        <h2 id="donar-title">Donaciones</h2>
+        <div class="don-row" style="margin-top:12px;">
+          <div class="don-text">
+            <p style="color:var(--muted); margin-bottom:12px;">
+              Gracias por apoyar nuestra misión. Puedes realizar tu donación escaneando el código QR o subiendo tu propio QR a la vista (solo local).
+            </p>
+
+            <label for="qrFile" class="btn" style="display:inline-block; width:auto; padding:10px 14px; background:var(--btn-color); color:var(--btn-text);">
+              Subir/Editar QR
+            </label>
+            <input type="file" id="qrFile" accept="image/*" style="display:none;">
+            <a href="#contacto" style="display:inline-block; margin-left:10px; padding:10px 14px; border-radius:10px; background:#f3f3f3; color:var(--muted); text-decoration:none; font-weight:700;">Contactar</a>
+
+            <p style="font-size:13px; color:var(--muted); margin-top:10px;">
+              • Puedes subir el QR desde tu equipo.<br>
+              • Si tienes el archivo en el proyecto, reemplaza el src manualmente.
+            </p>
+          </div>
+
+          <div id="qrPreview" class="qr-box" aria-hidden="false">
+            <img id="qrImg" src="qr-placeholder.png" alt="Código QR para donaciones" style="max-width:100%; max-height:100%; display:block;">
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="contacto" aria-labelledby="contacto-title">
+        <h2 id="contacto-title">Contáctanos</h2>
+        <p style="color:var(--muted);">
+          Dirección: Cra 6 12-27, Yumbo Valle, Colombia<br>
+          Teléfono: 312 8064557<br>
+          Correo: soycomotu_igualquetu@yahoo.es
+        </p>
+        <div style="margin-top:12px;">
+          <a href="mailto:fundacionsoycomotu@gmail.com" class="btn" style="display:inline-block; padding:10px 14px; text-decoration:none;">Enviar correo</a>
+        </div>
+      </section>
+    </section> <!-- .left -->
+
+    <!-- RIGHT: Panel + canvas + programas -->
+    <aside class="right" aria-label="Panel lateral">
+
+      <div class="panel" role="region" aria-labelledby="panel-title">
+        <h3 id="panel-title">Actividades creativas</h3>
+        <div style="color:var(--muted); margin-bottom:10px;">Área interactiva para que los niños creen y exploren</div>
+
+        <button class="btn" id="newSession">Iniciar actividad</button>
+        <button class="btn ghost" id="downloadBtn" style="margin-top:8px">Descargar dibujo</button>
+
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <input type="button" class="btn ghost" id="eraseBtn" value="Borrador" />
+          <input type="button" class="btn ghost" id="clearBtn" value="Limpiar" />
+        </div>
+      </div>
+
+      <div class="canvas-wrap card" aria-labelledby="canvas-title">
+        <h3 id="canvas-title" style="margin:0 0 8px 0;">Lienzo</h3>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <input type="color" id="colorPicker" value="#6C63FF" aria-label="Color del pincel" />
+          <input type="range" id="sizeRange" min="2" max="48" value="8" aria-label="Tamaño del pincel" style="flex:1;">
+          <button class="btn ghost" id="undoBtn" style="width:auto;padding:8px 10px;">Deshacer</button>
+        </div>
+
+        <canvas id="draw" class="draw-canvas" width="720" height="540" role="img" aria-label="Área de dibujo para niños"></canvas>
+
+        <div style="display:flex;gap:10px;align-items:center;margin-top:10px;">
+          <button class="btn" id="saveBtn">Guardar</button>
+          <small style="color:var(--muted)">Toque o arrastre para dibujar.</small>
+        </div>
+      </div>
+
+      <section class="card" id="programas" aria-labelledby="programas-title">
+        <h2 id="programas-title">Programas</h2>
+        <p style="color:var(--muted); line-height:1.6;">
+          <strong>Programa de Música Terapéutica</strong><br>
+          Talleres semanales para comunicación y motricidad.<br><br>
+          <strong>Programa de Arte Expresivo</strong><br>
+          Actividades plásticas para estimular la imaginación.<br><br>
+          <strong>Programa Familiar</strong><br>
+          Acompañamiento y estrategias para las familias.
+        </p>
+      </section>
+
+    </aside>
+
+    <!-- Footer -->
+    <footer style="grid-column:1 / -1; display:flex; justify-content:space-between; align-items:center; gap:12px; color:var(--muted); margin-top:18px;">
+      <div>© <span id="year"></span> Fundación Soy Como Tú</div>
+      <div style="display:flex;gap:12px;">
+        <a href="https://www.facebook.com/profile.php?id=61584093628121" target="_blank" aria-label="Facebook" style="color:var(--muted); text-decoration:none; font-weight:700;">Facebook</a>
+        <a href="https://www.instagram.com/fundacionsoycomotu2025/" target="_blank" aria-label="Instagram" style="color:var(--muted); text-decoration:none; font-weight:700;">Instagram</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Botones sociales flotantes (posicionados y con colores de marca) -->
+  <div class="social-fixed" aria-hidden="false">
+    <a class="social-btn facebook" data-tip="Facebook (Abrir)" href="https://www.facebook.com/profile.php?id=61584093628121" target="_blank" aria-label="Facebook" rel="noopener">
+      <!-- svg white -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="22" height="22" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-3h2v-2.3c0-2 1.2-3.1 3-3.1.9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.6-1.3 1.2V12h2.6l-.4 3h-2.2v7A10 10 0 0 0 22 12"/></svg>
+    </a>
+
+    <a class="social-btn instagram" data-tip="Instagram (Abrir)" href="https://www.instagram.com/fundacionsoycomotu2025/" target="_blank" aria-label="Instagram" rel="noopener">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="22" height="22" aria-hidden="true"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm4.5-.25a1.25 1.25 0 11-2.5 0 1.25 1.25 0 012.5 0z"/></svg>
+    </a>
+
+    <a class="social-btn whatsapp" data-tip="WhatsApp (Abrir)" id="waBtn" href="https://wa.me/573128064557" target="_blank" aria-label="WhatsApp" rel="noopener">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="22" height="22" aria-hidden="true"><path d="M20.52 3.48A11.85 11.85 0 0012 0C5.37 0 .02 5.35 0 12a12 12 0 001.9 6.41L0 24l5.9-1.54A11.96 11.96 0 0012 24c6.63 0 12-5.35 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 21.5c-1.5 0-2.96-.4-4.25-1.16l-.3-.18-3.51.9.94-3.42-.19-.31A8.5 8.5 0 013.5 12c0-4.69 3.81-8.5 8.5-8.5 4.69 0 8.5 3.81 8.5 8.5S16.69 21.5 12 21.5zM17.2 14.3c-.27-.14-1.6-.79-1.84-.88-.24-.09-.41-.14-.58.14-.18.27-.7.88-.86 1.06-.16.18-.31.2-.58.07-.27-.14-1.14-.42-2.17-1.34-.8-.71-1.34-1.59-1.5-1.86-.16-.27-.02-.42.12-.56.12-.12.27-.31.41-.47.14-.16.19-.27.3-.45.1-.19.05-.35-.02-.49-.07-.14-.58-1.4-.8-1.92-.21-.5-.43-.43-.58-.43h-.49c-.16 0-.42.06-.64.31-.22.25-.83.81-.83 1.98s.85 2.3.97 2.46c.12.16 1.66 2.6 4.03 3.64 2.37 1.04 2.37.69 2.8.65.44-.05 1.43-.58 1.63-1.14.21-.56.21-1.04.14-1.14-.07-.1-.24-.16-.51-.3z"/></svg>
+    </a>
+  </div>
+
+  <!-- Modal QR (vista ampliada) -->
+  <div id="modalQR" style="position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; z-index:9999;">
+    <div style="background:white; padding:18px; border-radius:12px; max-width:90vw; max-height:90vh; position:relative;">
+      <button id="closeModalQR" style="position:absolute; right:12px; top:12px; background:#eee; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;">Cerrar</button>
+      <img id="modalQRImg" src="qr-placeholder.png" alt="QR ampliado" style="display:block; margin-top:12px; max-width:80vw; max-height:80vh;">
+    </div>
+  </div>
+
+  <script>
+    // año dinámico
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Ajuste automático padding top según header real
+    function ajustarHeader(){
+      const header = document.querySelector('header.top');
+      const site = document.querySelector('.site');
+      if(!header || !site) return;
+      const altura = Math.ceil(header.getBoundingClientRect().height) + 6;
+      document.documentElement.style.setProperty('--header-h', altura + 'px');
+      site.style.padding = 'calc(' + altura + 'px + var(--header-safe)) 22px 48px';
+    }
+    window.addEventListener('load', ajustarHeader);
+    let __aj;
+    window.addEventListener('resize', () => { clearTimeout(__aj); __aj = setTimeout(ajustarHeader, 120); });
+
+    // smooth scroll con offset para links internos
+    function scrollToWithOffset(targetEl){
+      const header = document.querySelector('header.top');
+      const headerHeight = header ? header.getBoundingClientRect().height : 0;
+      const rect = targetEl.getBoundingClientRect();
+      const absoluteTop = window.pageYOffset + rect.top;
+      const offset = Math.max(8, headerHeight + 8);
+      window.scrollTo({ top: absoluteTop - offset, behavior: 'smooth' });
+    }
+    document.querySelectorAll('nav.main a[href^="#"], a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', function(e){
+        const href = this.getAttribute('href');
+        if(!href || href === '#') return;
+        if(href.startsWith('#')){
+          const id = href.slice(1);
+          const target = document.getElementById(id);
+          if(target){
+            e.preventDefault();
+            scrollToWithOffset(target);
+            history.replaceState(null, '', '#' + id);
+          }
+        }
+      });
+    });
+
+    /* =========================
+       CANVAS: Inicialización y handlers robustos
+       (solo esta sección fue modificada)
+       ========================= */
+    (function(){
+      const canvas = document.getElementById('draw');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d', { alpha: true });
+
+      // estado
+      let drawing = false;
+      let last = null;
+      let strokeColor = document.getElementById('colorPicker') ? document.getElementById('colorPicker').value : '#000';
+      let strokeWidth = document.getElementById('sizeRange') ? Number(document.getElementById('sizeRange').value) : 8;
+      const historyArr = [];
+
+      // Ajusta buffer del canvas de forma DPI-aware usando tamaño visible (getBoundingClientRect)
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const cssW = Math.max(1, Math.floor(rect.width));
+        const cssH = Math.max(1, Math.floor(rect.height));
+        const ratio = window.devicePixelRatio || 1;
+
+        // si no cambia, no hacemos nada
+        if (canvas.width === Math.floor(cssW * ratio) && canvas.height === Math.floor(cssH * ratio)) return;
+
+        // guarda lo dibujado
+        let imgData = null;
+        try { imgData = canvas.toDataURL(); } catch(e) { imgData = null; }
+
+        canvas.width = Math.floor(cssW * ratio);
+        canvas.height = Math.floor(cssH * ratio);
+        canvas.style.width = cssW + 'px';
+        canvas.style.height = cssH + 'px';
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+        if (imgData) {
+          const img = new Image();
+          img.onload = function(){
+            ctx.clearRect(0, 0, cssW, cssH);
+            ctx.drawImage(img, 0, 0, cssW, cssH);
+          };
+          img.src = imgData;
+        } else {
+          ctx.clearRect(0, 0, cssW, cssH);
+        }
+      }
+
+      // historial para deshacer
+      function pushHistory() {
+        try {
+          historyArr.push(canvas.toDataURL());
+          if (historyArr.length > 40) historyArr.shift();
+        } catch(e){}
+      }
+      function restoreFromHistory() {
+        if (historyArr.length === 0) return;
+        const d = historyArr.pop();
+        const img = new Image();
+        img.onload = function(){
+          const rect = canvas.getBoundingClientRect();
+          ctx.clearRect(0,0,rect.width, rect.height);
+          ctx.drawImage(img, 0, 0, rect.width, rect.height);
+        };
+        img.src = d;
+      }
+
+      function getPosFromEvent(e) {
+        const rect = canvas.getBoundingClientRect();
+        let clientX, clientY;
+        if (e.touches && e.touches.length) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        } else {
+          clientX = (e.clientX !== undefined) ? e.clientX : (e.pageX || 0);
+          clientY = (e.clientY !== undefined) ? e.clientY : (e.pageY || 0);
+        }
+        return { x: clientX - rect.left, y: clientY - rect.top };
+      }
+
+      function startDraw(e) {
+        e.preventDefault();
+        drawing = true;
+        last = getPosFromEvent(e);
+        pushHistory();
+      }
+      function moveDraw(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const p = getPosFromEvent(e);
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = strokeWidth;
+        ctx.beginPath();
+        ctx.moveTo(last.x, last.y);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        ctx.restore();
+        last = p;
+      }
+      function endDraw(e) {
+        if (!drawing) return;
+        drawing = false;
+        last = null;
+      }
+
+      // Pointer events preferred
+      if (window.PointerEvent) {
+        canvas.addEventListener('pointerdown', (ev)=>{ canvas.setPointerCapture && canvas.setPointerCapture(ev.pointerId); startDraw(ev); });
+        canvas.addEventListener('pointermove', moveDraw);
+        canvas.addEventListener('pointerup', (ev)=>{ canvas.releasePointerCapture && canvas.releasePointerCapture(ev.pointerId); endDraw(ev); });
+        canvas.addEventListener('pointercancel', endDraw);
+      } else {
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', moveDraw);
+        document.addEventListener('mouseup', endDraw);
+        canvas.addEventListener('touchstart', startDraw, { passive: false });
+        canvas.addEventListener('touchmove', moveDraw, { passive: false });
+        canvas.addEventListener('touchend', endDraw);
+      }
+
+      // Controles UI
+      const colorPicker = document.getElementById('colorPicker');
+      const sizeRange = document.getElementById('sizeRange');
+      const clearBtn = document.getElementById('clearBtn');
+      const eraseBtn = document.getElementById('eraseBtn');
+      const undoBtn = document.getElementById('undoBtn');
+      const saveBtn = document.getElementById('saveBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const newSessionBtn = document.getElementById('newSession');
+
+      if (colorPicker) colorPicker.addEventListener('input', (ev)=>{ strokeColor = ev.target.value; });
+      if (sizeRange) sizeRange.addEventListener('input', (ev)=>{ strokeWidth = Number(ev.target.value); });
+
+      if (clearBtn) clearBtn.addEventListener('click', ()=>{ pushHistory(); const rect = canvas.getBoundingClientRect(); ctx.clearRect(0,0,rect.width,rect.height); });
+      if (eraseBtn) eraseBtn.addEventListener('click', ()=>{
+        if (ctx.globalCompositeOperation === 'destination-out') {
+          ctx.globalCompositeOperation = 'source-over';
+          if (eraseBtn.tagName==='INPUT') eraseBtn.value = 'Borrador';
+        } else {
+          ctx.globalCompositeOperation = 'destination-out';
+          if (eraseBtn.tagName==='INPUT') eraseBtn.value = 'Dibujar';
+        }
+      });
+      if (undoBtn) undoBtn.addEventListener('click', restoreFromHistory);
+      if (saveBtn) saveBtn.addEventListener('click', ()=>{ const link=document.createElement('a'); link.download='dibujo.png'; link.href=canvas.toDataURL('image/png'); link.click(); });
+      if (downloadBtn) downloadBtn.addEventListener('click', ()=>{ const link=document.createElement('a'); link.download='actividad.png'; link.href=canvas.toDataURL('image/png'); link.click(); });
+      if (newSessionBtn) newSessionBtn.addEventListener('click', ()=>{ if(confirm('Iniciar nueva actividad eliminará el dibujo actual. ¿Continuar?')){ pushHistory(); const rect = canvas.getBoundingClientRect(); ctx.clearRect(0,0,rect.width,rect.height); } });
+
+      // resize handling
+      function onResize() { resizeCanvas(); }
+      window.addEventListener('resize', ()=>{ clearTimeout(window.__canvasResizeTimeout); window.__canvasResizeTimeout = setTimeout(onResize, 120); });
+
+      // inicializar
+      resizeCanvas();
+      pushHistory();
+    })();
+
+    // ========== Donaciones: subir QR y modal ==========
+    const qrFile = document.getElementById('qrFile');
+    const qrImg = document.getElementById('qrImg');
+    const qrPreview = document.getElementById('qrPreview');
+    const modalQR = document.getElementById('modalQR');
+    const modalQRImg = document.getElementById('modalQRImg');
+    const closeModalQR = document.getElementById('closeModalQR');
+
+    if(qrFile){
+      qrFile.addEventListener('change', () => {
+        const file = qrFile.files[0];
+        if(!file || !file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+          qrImg.src = e.target.result;
+          modalQRImg.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if(qrPreview){
+      qrPreview.addEventListener('click', () => {
+        modalQR.style.display = 'flex';
+        modalQRImg.src = qrImg.src;
+      });
+    }
+    if(closeModalQR){
+      closeModalQR.addEventListener('click', ()=>{ modalQR.style.display='none'; });
+      modalQR.addEventListener('click', e => { if(e.target === modalQR) modalQR.style.display = 'none'; });
+    }
+
+    // ========== profile img local change ==========
+    const profileFile = document.getElementById('profileFile');
+    const profileImg = document.getElementById('profileImg');
+    if(profileFile){
+      profileFile.addEventListener('change', () => {
+        const file = profileFile.files[0];
+        if(!file || !file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = e => { profileImg.src = e.target.result; };
+        reader.readAsDataURL(file);
+      });
+      profileImg.addEventListener('click', ()=> profileFile.click());
+    }
+
+    // ========== logo local change ==========
+    (function(){
+      const logoFile = document.getElementById('logoFile');
+      const logoImg = document.getElementById('logoImg');
+      if(logoFile){
+        logoFile.addEventListener('change', ()=> {
+          const file = logoFile.files[0];
+          if(!file || !file.type.startsWith('image/')) return;
+          const reader = new FileReader();
+          reader.onload = e => { logoImg.src = e.target.result; };
+          reader.readAsDataURL(file);
+        });
+        logoImg.addEventListener('click', ()=> logoFile.click());
+      }
+    })();
+
+    // ========== Floating social: touch handling for tooltips ==========
+    (function(){
+      const socialBtns = document.querySelectorAll('.social-btn[data-tip]');
+      socialBtns.forEach(btn=>{
+        btn.addEventListener('touchstart', (ev)=>{
+          ev.preventDefault();
+          btn.classList.add('show-tip');
+          setTimeout(()=> btn.classList.remove('show-tip'), 2200);
+        }, {passive:false});
+        btn.addEventListener('focus', ()=> btn.classList.add('show-tip'));
+        btn.addEventListener('blur', ()=> btn.classList.remove('show-tip'));
+      });
+
+      document.addEventListener('click', (e)=>{
+        const active = document.querySelector('.social-btn.show-tip');
+        if(active && active.contains(e.target)){
+          // second tap - allow link
+        }
+      });
+    })();
+     // ===== GALERÍA ACTIVIDADES =====
+const activities = [
+  { img: "IMG-1.jpg",  text: "El Petronito es la versión infantil y juvenil del Festival Petronio Álvarez, el evento de cultura afro más importante de Colombia. 20/11/2025" },
+  { img: "img/actividad2.jpg",  text: "Arte y pintura creativa." },
+  { img: "img/actividad3.jpg",  text: "Estimulación sensorial." },
+  { img: "img/actividad4.jpg",  text: "Juegos psicomotores." },
+  { img: "img/actividad5.jpg",  text: "Musicoterapia grupal." },
+  { img: "img/actividad6.jpg",  text: "Expresión corporal." },
+  { img: "img/actividad7.jpg",  text: "Manualidades creativas." },
+  { img: "img/actividad8.jpg",  text: "Teatro infantil." },
+  { img: "img/actividad9.jpg",  text: "Danza terapéutica." },
+  { img: "img/actividad10.jpg", text: "Lectura guiada." },
+  { img: "img/actividad11.jpg", text: "Actividades familiares." },
+  { img: "img/actividad12.jpg", text: "Integración social." },
+  { img: "img/actividad13.jpg", text: "Estimulación cognitiva." },
+  { img: "img/actividad14.jpg", text: "Arte con materiales reciclados." },
+  { img: "img/actividad15.jpg", text: "Juegos al aire libre." }
+];
+
+
+let actIndex = 0;
+
+const galleryImg = document.getElementById("galleryImg");
+const galleryText = document.getElementById("galleryText");
+const nextAct = document.getElementById("nextAct");
+const prevAct = document.getElementById("prevAct");
+
+function updateGallery(){
+  galleryImg.src = activities[actIndex].img;
+  galleryText.textContent = activities[actIndex].text;
+}
+
+nextAct.addEventListener("click", ()=>{
+  actIndex = (actIndex + 1) % activities.length;
+  updateGallery();
+});
+
+prevAct.addEventListener("click", ()=>{
+  actIndex = (actIndex - 1 + activities.length) % activities.length;
+  updateGallery();
+});
+
+  </script>
+</body>
+</html>
