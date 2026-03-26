@@ -761,21 +761,6 @@
       modalQR.addEventListener('click', e => { if(e.target === modalQR) modalQR.style.display = 'none'; });
     }
 
-    // ========== profile img local change ==========
-    const profileFile = document.getElementById('profileFile');
-    const profileImg = document.getElementById('profileImg');
-    if(profileFile){
-      profileFile.addEventListener('change', () => {
-        const file = profileFile.files[0];
-        if(!file || !file.type.startsWith('image/')) return;
-        const reader = new FileReader();
-        reader.onload = e => { profileImg.src = e.target.result; };
-        reader.readAsDataURL(file);
-      });
-      profileImg.addEventListener('click', ()=> profileFile.click());
-    }
-
-  
 
     // ========== Floating social: touch handling for tooltips ==========
     (function(){
